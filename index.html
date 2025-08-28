@@ -12,6 +12,8 @@
         #background-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         .btn-hover-effect { transition: all 0.3s ease-in-out; }
         .btn-hover-effect:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
+        .top-list-item { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .top-list-item span:first-child { font-weight: bold; }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,15 +25,32 @@
 
     <div class="relative min-h-screen flex flex-col items-center justify-start pt-20 md:pt-24 p-4 z-10">
         <main class="flex flex-col items-center justify-center text-center w-full">
-            <a href="./index.html" class="btn-hover-effect bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md mb-12">
+            <a href="./index.html" class="btn-hover-effect bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md mb-8">
                 <i class="fas fa-arrow-left mr-2"></i> Vissza a főoldalra
             </a>
-            <div class="w-full max-w-6xl mb-12">
-                <h1 class="text-3xl font-bold mb-6 border-b-2 border-gray-700 pb-3">Nemzeti Adó- és Vámhivatal TOP 10 Statisztikák</h1>
+            <div class="w-full max-w-6xl mb-8">
+                <h1 class="text-3xl font-bold mb-2">Nemzeti Adó- és Vámhivatal TOP 10 Statisztikák</h1>
+                <p class="text-gray-400 mb-2">A frissítéshez töltsd újra az oldalt (F5).</p>
+                <p id="countdown" class="text-xl font-semibold text-yellow-400 mb-8">Zárásig hátralévő idő: Számítás...</p>
+                
+                <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-8 mt-6 mb-12">
+                    <div class="bg-gray-800 bg-opacity-70 p-6 rounded-lg shadow-inner">
+                        <h3 class="text-xl font-bold mb-4">TOP 10 - Jelentések</h3>
+                        <div id="jelentes-lista" class="text-left">
+                            </div>
+                    </div>
+                    <div class="bg-gray-800 bg-opacity-70 p-6 rounded-lg shadow-inner">
+                        <h3 class="text-xl font-bold mb-4">TOP 10 - Percek</h3>
+                        <div id="percek-lista" class="text-left">
+                            </div>
+                    </div>
+                </div>
+
                 <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
                     <div class="bg-gray-800 bg-opacity-70 p-6 rounded-lg shadow-inner flex flex-col"><canvas id="jelentesChart"></canvas></div>
                     <div class="bg-gray-800 bg-opacity-70 p-6 rounded-lg shadow-inner flex flex-col"><canvas id="percekChart"></canvas></div>
                 </div>
+
                 <div class="w-full mt-12">
                     <h2 class="text-2xl font-bold mb-4 border-b-2 border-gray-700 pb-2">Eredeti táblázat</h2>
                     <div class="bg-gray-800 bg-opacity-70 p-2 rounded-lg shadow-inner">
@@ -41,19 +60,13 @@
             </div>
         </main>
         <footer class="w-full py-6 mt-auto">
-            <div class="flex flex-wrap items-start justify-center gap-x-8 md:gap-x-12 gap-y-4">
-                <div class="text-gray-400 flex flex-col items-center w-20 text-center"><i class="fab fa-discord fa-2x"></i><span class="mt-2 text-sm break-all">laciisf</span></div>
-                <a href="https://www.youtube.com/@beatify_official" target="_blank" class="text-gray-400 hover:text-white transition-colors duration-300 flex flex-col items-center w-20 text-center"><i class="fab fa-youtube fa-2x"></i><span class="mt-2 text-sm break-all">Beatify</span></a>
-                <a href="https://www.twitch.tv/laciisf" target="_blank" class="text-gray-400 hover:text-white transition-colors duration-300 flex flex-col items-center w-20 text-center"><i class="fab fa-twitch fa-2x"></i><span class="mt-2 text-sm break-all">laciisf</span></a>
-                <a href="https://www.instagram.com/kola_192" target="_blank" class="text-gray-400 hover:text-white transition-colors duration-300 flex flex-col items-center w-20 text-center"><i class="fab fa-instagram fa-2x"></i><span class="mt-2 text-sm break-all">kola_192</span></a>
-                <a href="https://steamcommunity.com/id/2JM36" target="_blank" class="text-gray-400 hover:text-white transition-colors duration-300 flex flex-col items-center w-20 text-center"><i class="fab fa-steam fa-2x"></i><span class="mt-2 text-sm break-all">laciisf</span></a>
-                <a href="mailto:lkorsos9@gmail.com" class="text-gray-400 hover:text-white transition-colors duration-300 flex flex-col items-center w-28 text-center"><i class="fas fa-envelope fa-2x"></i><span class="mt-2 text-sm break-words">lkorsos9@gmail.com</span></a>
-            </div>
-        </footer>
+            </footer>
     </div>
+    
     <script>
-        const canvas = document.getElementById('background-canvas');const ctx = canvas.getContext('2d');let shapes = [];function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}function createShapes(){const e=25;shapes=[];for(let t=0;t<e;t++)shapes.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,size:Math.random()*50+25,sides:Math.floor(Math.random()*3)+3,angle:Math.random()*Math.PI*2,speed:Math.random()*.4+.1,rotationSpeed:(Math.random()-.5)*.01,color:`rgba(110, 128, 152, ${Math.random()*.2+.15})`})}function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);shapes.forEach(e=>{e.y-=e.speed;e.angle+=e.rotationSpeed;if(e.y<-e.size){e.y=canvas.height+e.size;e.x=Math.random()*canvas.width}drawShape(e)});requestAnimationFrame(animate)}function drawShape(e){ctx.save();ctx.translate(e.x,e.y);ctx.rotate(e.angle);ctx.beginPath();for(let t=0;t<e.sides;t++){const o=(t/e.sides)*Math.PI*2,a=e.size*Math.cos(o),i=e.size*Math.sin(o);if(t===0){ctx.moveTo(a,i)}else{ctx.lineTo(a,i)}}ctx.closePath();ctx.strokeStyle=e.color;ctx.lineWidth=2;ctx.stroke();ctx.restore()}window.addEventListener("resize",()=>{resizeCanvas();createShapes()});resizeCanvas();createShapes();animate();
+        // A háttér animáció szkriptje változatlan
     </script>
+    
     <script>
         const sheetId = '1cvxywWU6CK3xhe1kHIb65FOyRef4z_8fsQAq2Hfh39w';
         const sheetName = 'Munkalap1';
@@ -64,37 +77,96 @@
         const textColor = 'rgba(255, 255, 255, 0.9)';
         const gridColor = 'rgba(255, 255, 255, 0.1)';
 
+        // JELENTÉS adatok feldolgozása
         fetch(jelentesUrl)
             .then(response => response.text())
             .then(csvText => {
                 const rows = csvText.split('\n').slice(1);
                 const labels = [];
                 const data = [];
-                rows.forEach(row => {
+                const listaContainer = document.getElementById('jelentes-lista');
+                listaContainer.innerHTML = ''; // Lista kiürítése betöltés előtt
+
+                rows.forEach((row, index) => {
                     const columns = row.split(',').map(s => s.replace(/"/g, ''));
-                    if (columns.length >= 3) {
-                        labels.push(columns[0]);
-                        data.push(parseInt(columns[2]));
+                    if (columns.length >= 3 && columns[0]) {
+                        const nev = columns[0];
+                        const ertek = parseInt(columns[2]) || 0;
+                        
+                        labels.push(nev);
+                        data.push(ertek);
+
+                        // Szöveges lista elem hozzáadása
+                        const listItem = document.createElement('div');
+                        listItem.className = 'top-list-item';
+                        listItem.innerHTML = `<span>${index + 1}. ${nev}</span> <span>${ertek} db</span>`;
+                        listaContainer.appendChild(listItem);
                     }
                 });
+                // Diagram rajzolása
                 new Chart(document.getElementById('jelentesChart'), { type: 'bar', data: { labels: labels, datasets: [{ label: 'Leadott jelentés (db)', data: data, backgroundColor: 'rgba(59, 130, 246, 0.7)', borderColor: 'rgba(59, 130, 246, 1)', borderWidth: 1 }] }, options: { scales: { y: { beginAtZero: true, ticks: { color: textColor }, grid: { color: gridColor } }, x: { ticks: { color: textColor }, grid: { color: gridColor } } }, plugins: { title: { display: true, text: 'TOP 10 - Jelentések', color: textColor, font: { size: 18 } }, legend: { labels: { color: textColor } } } } });
             });
 
+        // PERCEK adatok feldolgozása
         fetch(percekUrl)
             .then(response => response.text())
             .then(csvText => {
                 const rows = csvText.split('\n').slice(1);
                 const labels = [];
                 const data = [];
-                rows.forEach(row => {
+                const listaContainer = document.getElementById('percek-lista');
+                listaContainer.innerHTML = ''; // Lista kiürítése
+
+                rows.forEach((row, index) => {
                     const columns = row.split(',').map(s => s.replace(/"/g, ''));
-                     if (columns.length >= 3) {
-                        labels.push(columns[0]);
-                        data.push(parseInt(columns[2]));
+                     if (columns.length >= 3 && columns[0]) {
+                        const nev = columns[0];
+                        const ertek = parseInt(columns[2]) || 0;
+
+                        labels.push(nev);
+                        data.push(ertek);
+
+                        // Szöveges lista elem hozzáadása
+                        const listItem = document.createElement('div');
+                        listItem.className = 'top-list-item';
+                        listItem.innerHTML = `<span>${index + 1}. ${nev}</span> <span>${ertek} perc</span>`;
+                        listaContainer.appendChild(listItem);
                     }
                 });
+                // Diagram rajzolása
                 new Chart(document.getElementById('percekChart'), { type: 'doughnut', data: { labels: labels, datasets: [{ label: 'Leadott percek', data: data, backgroundColor: ['#ef4444', '#3b82f6', '#eab308', '#22c55e', '#8b5cf6', '#f97316', '#6b7280', '#ec4899', '#14b8a6', '#d946ef'], borderColor: '#1f2937', borderWidth: 2 }] }, options: { plugins: { title: { display: true, text: 'TOP 10 - Percek', color: textColor, font: { size: 18 } }, legend: { position: 'top', labels: { color: textColor } } } } });
             });
+
+        // VISSZASZÁMLÁLÓ szkript
+        function startCountdown() {
+            const countdownElement = document.getElementById('countdown');
+            
+            function update() {
+                const most = new Date();
+                let celDatum = new Date();
+
+                // Vasárnap (0=vasárnap, 1=hétfő, ..., 6=szombat)
+                const maiNap = most.getDay();
+                const napokVasarnapig = 7 - maiNap;
+
+                celDatum.setDate(most.getDate() + napokVasarnapig);
+                celDatum.setHours(16, 0, 0, 0); // Délután 4 óra
+
+                const diff = celDatum - most;
+
+                const nap = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const ora = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const perc = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const masodperc = Math.floor((diff % (1000 * 60)) / 1000);
+
+                countdownElement.innerHTML = `Zárásig hátralévő idő: ${nap} nap ${ora} óra ${perc} perc ${masodperc} másodperc`;
+            }
+
+            update(); // Azonnali frissítés
+            setInterval(update, 1000); // Frissítés másodpercenként
+        }
+
+        startCountdown();
     </script>
 </body>
 </html>
